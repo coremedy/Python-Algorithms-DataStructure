@@ -6,11 +6,6 @@ Copyright info: The code here comes, directly or indirectly, from Mari Wahl and 
                 Thanks Mari for her great work!
 '''
 
-'''
-An interesting function, coverting the number, such as 101101 (2 based) into decimal
-The number here is not a string, it is actually a decimal ...
-'''
-
 import struct
 from decimal import Decimal
 from fractions import Fraction
