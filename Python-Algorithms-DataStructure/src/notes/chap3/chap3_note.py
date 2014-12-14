@@ -38,5 +38,4 @@ if __name__ == '__main__':
     functions = dict(a=add_to_dict, e=edit_dict,...)
     functions[actions](db)
     '''
-
     
