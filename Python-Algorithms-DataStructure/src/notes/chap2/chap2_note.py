@@ -5,8 +5,11 @@ Copyright info: The code here comes, directly or indirectly, from Mari Wahl and 
                 I'm not the original owner of the code.
                 Thanks Mari for her great work!
 '''
+
 import decimal
 
+def example_args(a, b, c):
+    return a * b * c
 
 '''
 sequence types
@@ -75,4 +78,48 @@ if __name__ == '__main__':
     x, *y = (1, 2, 3, 4)
     print(x)
     print(y)
+    
+    people = ["Buffy", "Faith"]
+    print(people)
+    '''
+    people[len(people)] = "Giles"
+    '''
+    people.append("Giles")
+    print(people)
+    '''
+    people += "abc"
+    '''
+    people.extend("abc")
+    print(people)
+    
+    people = ["Buffy", "Faith"]
+    people.insert(1, 'Giles')
+    print(people)
+    people.remove('Giles')
+    print(people)
+    people.pop()
+    print(people)
+    '''
+    Deletes the object reference, not the contend,
+    '''
+    people = ["Buffy", "Faith"]
+    del(people[1])
+    print(people)
+    people = ["Buffy", "Faith", "Buffy"]
+    print(people.index('Buffy'))
+    print(people.count("Buffy"))
+    
+    people = ["Xander", "Faith", "Buffy"]
+    people.sort()
+    print(people)
+    
+    people = ["Xander", "Faith", "Buffy"]
+    people.reverse()
+    print(people)    
+    
+    LL = [1,2,3]
+    print(example_args(*LL))
+    
+    a = [y for y in range(1900, 1940) if y%4 == 0]
+    print(a)
     
