@@ -28,6 +28,7 @@ class Deque(object):
             node = Node(value, None, self.left_pointer)
             self.left_pointer.left_pointer = node
             self.left_pointer = node
+        self.sz += 1
 
     def enqueue_right(self, value):
         if self.isEmpty():
@@ -36,6 +37,7 @@ class Deque(object):
             node = Node(value, self.right_pointer, None)
             self.right_pointer.right_pointer = node
             self.right_pointer = node
+        self.sz += 1
 
     def dequeue_left(self):
         if self.isEmpty():
@@ -47,6 +49,7 @@ class Deque(object):
                 self.right_pointer = None
             else:
                 self.left_pointer.left_pointer = None
+            self.sz -= 1
             return node.val
     
     def dequeue_right(self):
@@ -59,6 +62,7 @@ class Deque(object):
                 self.left_pointer = None
             else:
                 self.right_pointer.right_pointer = None
+            self.sz -= 1
             return node.val
 
     def peek_left(self):
