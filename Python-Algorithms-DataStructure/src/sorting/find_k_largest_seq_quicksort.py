@@ -9,8 +9,10 @@ Copyright info: The code here comes, directly or indirectly, from Mari Wahl and 
 import random
 
 def qselect(A, k, left=None, right=None):
-    left = left or 0
-    right = right or len(A) - 1
+    if left is None:
+        left = 0
+    if right is None:
+        right = len(A) - 1
     pivot_index = random.randint(left, right)
     pivot = A[pivot_index]
     
