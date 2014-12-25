@@ -94,7 +94,7 @@ class NodeBT(object):
         elif self.right and (not self.left):
             return self.right._isBST(self.item, max_item)
         else:
-            return (self.left._isBST(min_item, self.item) and self.right._isBST(self.item, max_item))
+            return self.left._isBST(min_item, self.item) and self.right._isBST(self.item, max_item)
 
 class BinaryTree(object):
     def __init__(self):
