@@ -1,0 +1,138 @@
+'''
+Created on 2014-12-26
+Code coming from: http://interactivepython.org/runestone/static/pythonds/Trees/SearchTreeImplementation.html
+'''
+
+import sys
+
+class TreeNode(object):
+    
+    def __init__(self, key, val, left = None, right = None, parent = None, depth = 0):
+        self.key = key
+        self.payload = val
+        self.leftChild = left
+        self.rightChild = right
+        self.depth = depth
+        # only root node does not have parent
+        self.parent = parent
+    
+    def hasLeftChild(self):
+        # None or left child
+        return self.leftChild
+    
+    def hasRightChild(self):
+        # None or right child
+        return self.rightChild
+    
+    def isLeftChild(self):
+        return self.parent and (self.parent.leftChild is self)
+    
+    def isRightChild(self):
+        return self.parent and (self.parent.rightChild is self)
+
+    def isRoot(self):
+        return not self.parent
+
+    def isLeaf(self):
+        return not (self.rightChild or self.leftChild)
+
+    def hasAnyChildren(self):
+        return self.rightChild or self.leftChild
+
+    def hasBothChildren(self):
+        return self.rightChild and self.leftChild
+    
+    def replaceNodeData(self, key, value, lc, rc):
+        self.key = key
+        self.payload = value
+        self.leftChild = lc
+        self.rightChild = rc
+        if self.hasLeftChild():
+            self.leftChild.parent = self
+        if self.hasRightChild():
+            self.rightChild.parent = self
+
+    def getDepth(self):
+        return self.depth
+
+    def adjustDepth(self, depth):
+        # pre-order
+        self.depth = depth
+        if self.leftChild:
+            self.leftChild.adjustDepth(depth + 1)
+        if self.rightChild:
+            self.rightChild.adjustDepth(depth + 1)
+
+    # additional functions
+    def getHeight(self, minHeight = False):
+        mh_left, mh_right = -1, -1
+        if self.leftChild:
+            mh_left = self.leftChild.getMinimumHeight(minHeight)
+        if self.rightChild:
+            mh_right = self.rightChild.getMinimumHeight(minHeight)
+        if minHeight:
+            return min(mh_left, mh_right) + 1
+        else:
+            return max(mh_left, mh_right) + 1
+    
+    def isBalanced(self):
+        if self.getHeight() - self.getHeight(True) < 2:
+            return True
+        return False
+    
+    def isBST(self, min_key = -sys.maxsize, max_key = sys.maxsize):
+        if not self.key:
+            print("The key of this node is empty!")
+            return False
+        if (self.key > max_key) or (self.key < min_key):
+            return False
+        if self.isLeaf():
+            return True
+        elif self.leftChild and (not self.rightChild):
+            return self.leftChild.isBST(min_key, self.key)
+        elif self.rightChild and (not self.leftChild):
+            return self.rightChild.isBST(self.key, min_key)
+        else:
+            return self.leftChild.isBST(min_key, self.key) and self.rightChild.isBST(self.key, max_key)
+            
+    def __findMin(self):
+        current = self
+        while current.hasLeftChild():
+            current = current.leftChild
+        return current
+
+    def findSuccessor(self):
+        succ = None
+        if self.rightChild:
+            succ = self.rightChild.__findMin()
+        else:
+            if self.parent:
+                if self.isLeftChild():
+                    succ = self.parent
+                else:
+                    self.parent.rightChild = None
+                    succ = self.parent.findSuccessor()
+                    self.parent.rightChild = self
+        return succ
+
+    def spliceOut(self):
+        if self.isLeaf():
+            if self.isLeftChild():
+                self.parent.leftChild = None
+            else:
+                self.parent.rightChild = None
+        elif self.hasAnyChildren():
+            if self.hasLeftChild():
+                if self.isLeftChild():
+                    self.parent.leftChild = self.leftChild
+                else:
+                    self.parent.rightChild = self.leftChild
+                self.leftChild.parent = self.parent
+                self.leftChild.adjustDepth(self.depth)
+            else:
+                if self.isLeftChild():
+                    self.parent.leftChild = self.rightChild
+                else:
+                    self.parent.rightChild = self.rightChild
+                self.rightChild.parent = self.parent
+                self.rightChild.adjustDepth(self.depth)
