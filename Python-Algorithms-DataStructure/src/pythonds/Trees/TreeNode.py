@@ -1,5 +1,5 @@
 '''
-Created on 2014-12-26
+Created on 2014-12-30
 Code coming from: http://interactivepython.org/runestone/static/pythonds/Trees/SearchTreeImplementation.html
 '''
 
@@ -15,6 +15,8 @@ class TreeNode(object):
         self.depth = depth
         # only root node does not have parent
         self.parent = parent
+        # This is okay because the balance factor of a leaf is zero
+        self.balanceFactor = 0
     
     def hasLeftChild(self):
         # None or left child
@@ -94,45 +96,3 @@ class TreeNode(object):
             return self.rightChild.isBST(self.key, min_key)
         else:
             return self.leftChild.isBST(min_key, self.key) and self.rightChild.isBST(self.key, max_key)
-            
-    def __findMin(self):
-        current = self
-        while current.hasLeftChild():
-            current = current.leftChild
-        return current
-
-    def findSuccessor(self):
-        succ = None
-        if self.rightChild:
-            succ = self.rightChild.__findMin()
-        else:
-            if self.parent:
-                if self.isLeftChild():
-                    succ = self.parent
-                else:
-                    self.parent.rightChild = None
-                    succ = self.parent.findSuccessor()
-                    self.parent.rightChild = self
-        return succ
-
-    def spliceOut(self):
-        if self.isLeaf():
-            if self.isLeftChild():
-                self.parent.leftChild = None
-            else:
-                self.parent.rightChild = None
-        elif self.hasAnyChildren():
-            if self.hasLeftChild():
-                if self.isLeftChild():
-                    self.parent.leftChild = self.leftChild
-                else:
-                    self.parent.rightChild = self.leftChild
-                self.leftChild.parent = self.parent
-                self.leftChild.adjustDepth(self.depth)
-            else:
-                if self.isLeftChild():
-                    self.parent.leftChild = self.rightChild
-                else:
-                    self.parent.rightChild = self.rightChild
-                self.rightChild.parent = self.parent
-                self.rightChild.adjustDepth(self.depth)
