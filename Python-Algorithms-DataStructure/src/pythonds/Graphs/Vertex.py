@@ -5,6 +5,20 @@ Code coming from: http://interactivepython.org/runestone/static/pythonds/Graphs/
 
 from adt.queues.queue import Queue
 
+# heuristic searches
+# THIS REALLY MAKES A DIFFERENCE!!!
+def orderByAvail(n):
+    resList = []
+    for v in n.getConnections():
+        if v.getColor() == 'white':
+            c = 0
+            for w in v.getConnections():
+                if w.getColor() == 'white':
+                    c = c + 1
+            resList.append((c,v))
+    resList.sort(key=lambda x: x[0])
+    return [y[1] for y in resList]
+
 class Vertex:
     
     def __init__(self, key):
@@ -92,7 +106,7 @@ class Vertex:
         else:
             self.setColor('gray')
             path_recorder.append(self)            
-            for neighbour in self.getConnections():
+            for neighbour in orderByAvail(self):
                 if neighbour.getColor() == 'white':
                     # you need to use the result of recursive call to determine whether to backtrack or not
                     done = neighbour.backtrack_knightTour(current_path_length + 1, path_length_limit, path_recorder)
@@ -109,6 +123,7 @@ class Vertex:
         for neighbour in self.getConnections():
             if neighbour.getColor() != 'white':
                 neighbour.dfs_colorBack_postKnightTour()
+
 
 if __name__ == '__main__':
     pass

@@ -33,6 +33,6 @@ def genKnightGraph(boardSize):
 if __name__ == '__main__':
     path_recorder = []
     g = genKnightGraph(8)
-    if g.getVertex(0).backtrack_knightTour(0, 7, path_recorder):
+    if g.getVertex(0).backtrack_knightTour(0, 63, path_recorder):
         print(list(map(lambda v: v.getId(), path_recorder)))
     g.getVertex(0).dfs_colorBack_postKnightTour()
