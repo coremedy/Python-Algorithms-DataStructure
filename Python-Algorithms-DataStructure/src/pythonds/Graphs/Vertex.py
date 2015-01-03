@@ -1,5 +1,5 @@
 '''
-Created on 2014-12-31
+Created on 2015-01-03
 Code coming from: http://interactivepython.org/runestone/static/pythonds/Graphs/ImplementingBreadthFirstSearch.html
 '''
 
@@ -71,7 +71,44 @@ class Vertex:
                 if neighbour.getColor() == 'black':
                     neighbour.setColor('gray')
                     vertexQueue.enqueue(neighbour)
-            currentVertex.setColor('white')        
+            currentVertex.setColor('white')
+    
+    '''
+    Some explanation:
+    When we use pure dfs, we will get a TREE from the graph.
+    However, if you need to get a special form of TREE (the special TREE looks like a segment and it is
+    actually a PATH containing all vertices, exactly ONCE), pure dfs is not feasible and you need to backtrack.
+    In Knight Tour Problem, you need to get a PATH containing all vertices and every vertex is visited exactly once.
+    This is actually a new permutation of the vertices, satisfying certain relations.
+    So backtrack here!
+    '''
+    def backtrack_knightTour(self, current_path_length, path_length_limit, path_recorder):
+        done = False
+        if current_path_length == path_length_limit:
+            # we are done
+            self.setColor('gray')
+            path_recorder.append(self)
+            done = True
+        else:
+            self.setColor('gray')
+            path_recorder.append(self)            
+            for neighbour in self.getConnections():
+                if neighbour.getColor() == 'white':
+                    # you need to use the result of recursive call to determine whether to backtrack or not
+                    done = neighbour.backtrack_knightTour(current_path_length + 1, path_length_limit, path_recorder)
+                if done:
+                    break
+            if not done:
+                # backtrack
+                self.setColor('white')
+                path_recorder.pop()
+        return done
+    
+    def dfs_colorBack_postKnightTour(self):
+        self.setColor('white')
+        for neighbour in self.getConnections():
+            if neighbour.getColor() != 'white':
+                neighbour.dfs_colorBack_postKnightTour()
 
 if __name__ == '__main__':
     pass

@@ -26,3 +26,4 @@ def random_tree(n):
 
 if __name__ == '__main__':
     random_tree(10000)
+    #benchmark(random_tree)(10000)
