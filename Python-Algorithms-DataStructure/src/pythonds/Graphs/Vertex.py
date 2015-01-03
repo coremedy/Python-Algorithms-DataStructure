@@ -3,30 +3,19 @@ Created on 2015-01-03
 Code coming from: http://interactivepython.org/runestone/static/pythonds/Graphs/ImplementingBreadthFirstSearch.html
 '''
 
-from adt.queues.queue import Queue
-
-# heuristic searches
-# THIS REALLY MAKES A DIFFERENCE!!!
-def orderByAvail(n):
-    resList = []
-    for v in n.getConnections():
-        if v.getColor() == 'white':
-            c = 0
-            for w in v.getConnections():
-                if w.getColor() == 'white':
-                    c = c + 1
-            resList.append((c,v))
-    resList.sort(key=lambda x: x[0])
-    return [y[1] for y in resList]
-
 class Vertex:
-    
+        
     def __init__(self, key):
         self.id = key
         self.connectedTo = {}
         self.color = 'white'
         self.pred = None
         self.dist = 0
+        self.discovery_time = 0
+        # The 'leaf' node has the smallest finish time while the 'root' node has the largest one
+        # This can be used in topological sort
+        # Those with large finish time come first and those with small one come last
+        self.finish_time = 0
     
     def addNeighbor(self, nbr, weight = 0):
         self.connectedTo[nbr] = weight
@@ -61,69 +50,11 @@ class Vertex:
     def getDistance(self):
         return self.dist
     
-    def bfs_undirected(self):
-        # preparation
-        vertexQueue = Queue()
-        self.setColor('gray')
-        vertexQueue.enqueue(self)
-        # breath-first
-        while not vertexQueue.isEmpty():
-            currentVertex = vertexQueue.dequeue()
-            for neighbour in currentVertex.getConnections():
-                if neighbour.getColor() == 'white':
-                    neighbour.setColor('gray')
-                    neighbour.setDistance(currentVertex.getDistance() + 1)
-                    neighbour.setPred(currentVertex)
-                    vertexQueue.enqueue(neighbour)
-            currentVertex.setColor('black')
-        # get the color back
-        self.setColor('gray')
-        vertexQueue.enqueue(self)
-        while not vertexQueue.isEmpty():
-            currentVertex = vertexQueue.dequeue()
-            for neighbour in currentVertex.getConnections():
-                if neighbour.getColor() == 'black':
-                    neighbour.setColor('gray')
-                    vertexQueue.enqueue(neighbour)
-            currentVertex.setColor('white')
+    def setDiscovery(self, discovery_time):
+        self.discovery_time = discovery_time
     
-    '''
-    Some explanation:
-    When we use pure dfs, we will get a TREE from the graph.
-    However, if you need to get a special form of TREE (the special TREE looks like a segment and it is
-    actually a PATH containing all vertices, exactly ONCE), pure dfs is not feasible and you need to backtrack.
-    In Knight Tour Problem, you need to get a PATH containing all vertices and every vertex is visited exactly once.
-    This is actually a new permutation of the vertices, satisfying certain relations.
-    So backtrack here!
-    '''
-    def backtrack_knightTour(self, current_path_length, path_length_limit, path_recorder):
-        done = False
-        if current_path_length == path_length_limit:
-            # we are done
-            self.setColor('gray')
-            path_recorder.append(self)
-            done = True
-        else:
-            self.setColor('gray')
-            path_recorder.append(self)            
-            for neighbour in orderByAvail(self):
-                if neighbour.getColor() == 'white':
-                    # you need to use the result of recursive call to determine whether to backtrack or not
-                    done = neighbour.backtrack_knightTour(current_path_length + 1, path_length_limit, path_recorder)
-                if done:
-                    break
-            if not done:
-                # backtrack
-                self.setColor('white')
-                path_recorder.pop()
-        return done
-    
-    def dfs_colorBack_postKnightTour(self):
-        self.setColor('white')
-        for neighbour in self.getConnections():
-            if neighbour.getColor() != 'white':
-                neighbour.dfs_colorBack_postKnightTour()
-
+    def setFinish(self, finish_time):
+        self.finish_time = finish_time
 
 if __name__ == '__main__':
     pass
