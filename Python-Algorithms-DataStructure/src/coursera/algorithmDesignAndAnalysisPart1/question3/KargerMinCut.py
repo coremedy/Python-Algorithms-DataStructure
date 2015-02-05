@@ -40,19 +40,21 @@ def karger_mincut(adjacent_matrix, vertice_set, adjacent_table):
         # Choose with WEIGHT S(vertex)
         u = weighted_random_choice(vertice_set, adjacent_matrix, 0)
         # Choose with WEIGHT W(u, vertex)
+        # Only search the valid vertices that are connected with u
         v = weighted_random_choice(vertice_set.difference(set([u])).intersection(adjacent_table[u]), adjacent_matrix, u)
         # Start working on matrix - O(n)
         adjacent_matrix[0][u] = adjacent_matrix[0][u] + adjacent_matrix[0][v] - 2 * adjacent_matrix[u][v]
         adjacent_matrix[u][0] = adjacent_matrix[u][0] + adjacent_matrix[v][0] - 2 * adjacent_matrix[u][v]
         adjacent_matrix[0][v] = adjacent_matrix[v][0] = 0
         adjacent_matrix[u][v] = adjacent_matrix[v][u] = 0
+        # Only search the valid vertices that are connected with u or v
         for vertex in adjacent_table[u].union(adjacent_table[v]).difference(set([u, v])):
             adjacent_matrix[u][vertex] += adjacent_matrix[v][vertex]
             adjacent_matrix[vertex][u] += adjacent_matrix[vertex][v]
             adjacent_matrix[v][vertex] = 0
             adjacent_matrix[vertex][v] = 0
         vertice_set.discard(v)
-        # Start working on adjacent table - O(n)
+        # Start working on adjacent table - O(n), eliminate v
         adjacent_table[u].remove(v)
         adjacent_table[v].remove(u)
         adjacent_table[u].update(adjacent_table[v])
@@ -81,14 +83,15 @@ if __name__ == '__main__':
                 S += 1
                 adjacent_matrix_global[int(vertice[0])][int(vertice[i])] = 1
             adjacent_matrix_global[int(vertice[0])][0] = adjacent_matrix_global[0][int(vertice[0])] = S
-    # Since this is random algorithm, we need it to run for O(n^2logn) times to get the success rate of (1 - 1/n)
-    # However, you will soon discover the correct result after hundreds of execution and then please kill the program
+    # Since this is random algorithm, we need to run it for O(n^2logn) times to get the success rate of (1 - 1/n)
+    # However, the correct result normally appears after hundreds of execution and then feel free to kill the program
     # Overall, O(n^4logn)
     execution_times = len(vertice_set_global) * len(vertice_set_global) * int(math.log2(len(vertice_set_global)))
     minimal_cut = len(vertice_set_global)
     count = 0
     while execution_times > 0:
         # Initialize local copy
+        # The adjacent hash table with sets is used to avoid operations on vertices that are not related
         adjacent_table = dict()
         for x in vertice_set_global:
             vertice_set_runtime.add(x)
@@ -103,6 +106,6 @@ if __name__ == '__main__':
         minimal_cut = min(minimal_cut, karger_mincut(adjacent_matrix_runtime, vertice_set_runtime, adjacent_table))
         execution_times -= 1
         count += 1
-        print("Executed %d times, the current result is %d " % (count, minimal_cut))
+        print("Executed %6d times, the current result is %3d " % (count, minimal_cut))
     
     print("Final result is: %d" % (minimal_cut))
