@@ -6,7 +6,6 @@ Question URL: https://class.coursera.org/algo2-004/quiz/attempt?quiz_id=89
 
 import time
 import heapq
-import copy
 
 def heap_push(vertex, dist):
     vertex_dist_list = [dist, vertex]
@@ -32,6 +31,10 @@ def heap_pop_min():
     return valid_vertex_dist_list
 
 def dijkstra(source):
+    dijkstra_distance = [4294967296 for dummy_index in range(0, number_of_vertices + 1)]
+    dijkstra_flag = [True for dummy_index in range(0, number_of_vertices + 1)]
+    dijkstra_distance[source] = 0
+    
     heap_push(source, dijkstra_distance[source])
     while True:
         current_vertex_dist_list = heap_pop_min()
@@ -46,28 +49,30 @@ def dijkstra(source):
                         heap_delete(current_head)
                         dijkstra_distance[current_head] = current_vertex_dist_list[0] + adjacent_matrix[current_tail][current_head]
                         heap_push(current_head, dijkstra_distance[current_head])
+    return dijkstra_distance
 
 def bellman_ford():
-    bellman_ford_dist_prev = [4294967296 for dummy_index in range_zero_to_limit]
-    bellman_ford_dist_prev[0] = 0
-    bellman_ford_dist_next = copy.deepcopy(bellman_ford_dist_prev)
-    for index in range_one_to_limit:
-        for edge in all_edges_plus_dummy_edges:
-            if bellman_ford_dist_prev[edge[0]] + adjacent_matrix[edge[0]][edge[1]] < bellman_ford_dist_prev[edge[1]]:
-                bellman_ford_dist_next[edge[1]] = bellman_ford_dist_prev[edge[0]] + adjacent_matrix[edge[0]][edge[1]]
-        if index < number_of_vertices:
-            bellman_ford_dist_prev = copy.deepcopy(bellman_ford_dist_next)
-    # Detect negative cycle
-    for index in range_one_to_limit:
-        if bellman_ford_dist_next[index] != bellman_ford_dist_prev[index]:
-            return None
-    return bellman_ford_dist_next
+    # Using map function will result in more time ...
+    bellman_ford_dist = [4294967296 for dummy_index in range(0, number_of_vertices + 1)]
+    bellman_ford_dist[0] = 0
+    
+    for iter_index in range(1, number_of_vertices + 1):
+        for head_vertex in in_dict_with_extra_source.keys():
+            for tail_vertex in in_dict_with_extra_source[head_vertex]:
+                if bellman_ford_dist[tail_vertex] + adjacent_matrix[tail_vertex][head_vertex] < bellman_ford_dist[head_vertex]:
+                    if iter_index == number_of_vertices:
+                        return None
+                    else:
+                        bellman_ford_dist[head_vertex] = bellman_ford_dist[tail_vertex] + adjacent_matrix[tail_vertex][head_vertex]    
+    return bellman_ford_dist
 
 if __name__ == '__main__':
     start_time = time.time()
     # For Dijkstra
     weight_dict = dict()
     out_dict_original = dict()
+    # For Bellman-Ford
+    in_dict_with_extra_source = dict()
     # Heap data structure
     vertex_dist_heap = []
     heap_element_finder = dict()
@@ -78,45 +83,40 @@ if __name__ == '__main__':
             if len(data) == 2:
                 number_of_vertices = int(data[0])
                 number_of_edge = int(data[1])
-                range_zero_to_limit = [x for x in range(0, number_of_vertices + 1)]
-                range_one_to_limit = [x for x in range(1, number_of_vertices + 1)]
-                adjacent_matrix = [[0 for dummy_col in range_zero_to_limit] for dummy_row in range_zero_to_limit]
-                # For Bellman-Ford
-                all_edges_plus_dummy_edges = [(0, x) for x in range_one_to_limit]
-                # For Dijkstra     
-                dijkstra_distance = [4294967296 for dummy_index in range_zero_to_limit]
-                dijkstra_flag = [True for dummy_index in range_zero_to_limit]
+                adjacent_matrix = [[0 for dummy_col in range(0, number_of_vertices + 1)] for dummy_row in range(0, number_of_vertices + 1)]
             else:
                 tail = int(data[0])
                 head = int(data[1])
                 weight = int(data[2])
                 adjacent_matrix[tail][head] = weight
-                all_edges_plus_dummy_edges.append((tail, head))
                 weight_dict[(tail, head)] = weight
                 if tail in out_dict_original:
                     out_dict_original[tail].add(head)
                 else:
                     out_dict_original[tail] = set()
                     out_dict_original[tail].add(head)
+                if head not in in_dict_with_extra_source:
+                    in_dict_with_extra_source[head] = set()
+                    in_dict_with_extra_source[head].add(0)
+                    in_dict_with_extra_source[head].add(tail)
+                else:
+                    in_dict_with_extra_source[head].add(tail)   
     print('Processing input --- %s seconds ---' % (time.time() - start_time))
     start_time = time.time()
-    bellman_ford_dist = bellman_ford()
-    if bellman_ford_dist is not None:
+    bellman_ford_result = bellman_ford()
+    if bellman_ford_result is not None:
         print('Bellman-ford --- %s seconds ---' % (time.time() - start_time))
         start_time = time.time()
         # Adjust the matrix
         for tup in weight_dict.keys():
-            adjacent_matrix[tup[0]][tup[1]] = weight_dict[tup] + bellman_ford_dist[tup[0]] - bellman_ford_dist[tup[1]]
+            adjacent_matrix[tup[0]][tup[1]] = weight_dict[tup] + bellman_ford_result[tup[0]] - bellman_ford_result[tup[1]]
         # N Dijkstra
         min_distance = 4294967296
-        for source in range_one_to_limit:
-            dijkstra_distance[source] = 0
-            dijkstra(source)
-            for target in range_one_to_limit:
+        for source in range(1, number_of_vertices + 1):
+            dijkstra_result = dijkstra(source)
+            for target in range(1, number_of_vertices + 1):
                 if target != source:
-                    min_distance = min(min_distance, dijkstra_distance[target] - bellman_ford_dist[source] + bellman_ford_dist[target])
-                dijkstra_distance[target] = 4294967296
-                dijkstra_flag[target] = True
+                    min_distance = min(min_distance, dijkstra_result[target] - bellman_ford_result[source] + bellman_ford_result[target])
             heap_element_finder.clear()
         print('n Dijkstra --- %s seconds ---' % (time.time() - start_time))
         print(min_distance)
