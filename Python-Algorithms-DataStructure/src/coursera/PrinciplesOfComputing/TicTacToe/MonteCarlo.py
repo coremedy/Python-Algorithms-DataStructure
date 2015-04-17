@@ -9,7 +9,6 @@ Monte Carlo Tic-Tac-Toe Player
 """
 
 import random
-import poc_ttt_gui  # @UnresolvedImport
 import poc_ttt_provided as provided  # @UnresolvedImport
 
 # Constants for Monte Carlo simulator
