@@ -39,8 +39,6 @@ if __name__ == '__main__':
     for length in range(1, number_of_cities + 1):
         length_set_map[length] = filter(lambda tup: tup[0] == 1, itertools.combinations([dummy_row for dummy_row in range(1, number_of_cities + 1)], length))
     dynamic_programming_table = numpy.zeros((int(math.pow(2, number_of_cities)), number_of_cities + 1), float)    
-    #dynamic_programming_table = numpy.full(, float('inf'), )
-    #dynamic_programming_table[1][1] = 0.0
     print('Processing input and creating data structure: --- %s seconds ---' % (time.time() - start_time))
     start_time = time.time()
     for m in range(2, number_of_cities + 1):
@@ -61,5 +59,5 @@ if __name__ == '__main__':
     final_val = dynamic_programming_table[int(math.pow(2, number_of_cities)) - 1][2] +  distance_matrix[2][1]
     for j in range(3, number_of_cities + 1):
         final_val = min(final_val, dynamic_programming_table[int(math.pow(2, number_of_cities)) - 1][j] +  distance_matrix[j][1])
-    print(final_val)
+    print(int(final_val))
     print('Dynamic programming: --- %s seconds ---' % (time.time() - start_time))
