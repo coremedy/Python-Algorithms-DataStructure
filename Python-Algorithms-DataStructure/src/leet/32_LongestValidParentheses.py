@@ -1,5 +1,5 @@
 '''
-Created on 2015-07-19
+Created on 2015-07-20
 
 DP: table[i] represents the max valid substring starting at i
     if s[i] == ')' table[i] will be zero because no valid string starts with ')'
