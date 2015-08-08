@@ -36,7 +36,6 @@ class Solution:
                         next_pos += 1
                 token_stack.append(self.calc_helper(token_stack, int(s[index:next_pos])))
                 index = next_pos
-                
         return token_stack[0]
         
     def calc_helper(self, token_stack, val):
@@ -49,7 +48,6 @@ class Solution:
                 lhs = token_stack.pop()
                 val = lhs - val
         return val
-
 
 if __name__ == '__main__':
     pass
