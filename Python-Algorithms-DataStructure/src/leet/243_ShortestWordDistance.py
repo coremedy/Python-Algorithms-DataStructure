@@ -1,5 +1,5 @@
 '''
-Created on 2015-08-09
+Created on 2015-08-31
 '''
 
 class Solution:
@@ -8,16 +8,16 @@ class Solution:
     # @param {string} word2
     # @return {integer}
     def shortestDistance(self, words, word1, word2):
-        distance = len(words)
-        recorder = dict()
-        for index in range(distance):
-            if words[index] not in recorder:
-                recorder[words[index]] = []
-            recorder[words[index]].append(index)
-        for i in recorder[word1]:
-            for j in recorder[word2]:
-                distance = min(distance, max(i, j) - min(i, j))
-        return distance
+        i, j, index, result = -1, -1, 0, len(words)
+        for w in words:
+            if w == word1:
+                i = index
+            if w == word2:
+                j = index
+            if i != -1 and j != -1:
+                result = min(result, max(i, j) - min(i, j))
+            index += 1
+        return result
 
 if __name__ == '__main__':
     pass
