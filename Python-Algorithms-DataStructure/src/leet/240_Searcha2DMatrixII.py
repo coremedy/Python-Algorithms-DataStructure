@@ -1,5 +1,6 @@
 '''
 Created on 2015-10-20
+Divide and Conquer: T(n) = 3T(n/2) + constant
 '''
 
 class Solution(object):
