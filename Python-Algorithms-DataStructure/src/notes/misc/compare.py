@@ -38,15 +38,16 @@ if __name__ == '__main__':
     for line in fileHandler1:
         tok = line.strip().split()
         if len(tok) != 2:
-            print('Error: ' + sys.argv[1] + ' has Invalid format!')
-            closeFiles(fileHandler1, fileHandler2, outputFileHandler, sys.argv[3], True)
-            exit(1)
+            print('Error: ' + sys.argv[1] + ' has one line with invalid format! the line is \'' + line + '\'')
+            # closeFiles(fileHandler1, fileHandler2, outputFileHandler, sys.argv[3], True)
+            # exit(1)
+            continue
         if tok[0] not in d:
             d[tok[0]] = tok[1]
-        else:
-            print('Error: ' + sys.argv[1] + ' has duplicate host name!')
-            closeFiles(fileHandler1, fileHandler2, outputFileHandler, sys.argv[3], True)
-            exit(1)
+        elif d[tok[0]] != tok[1]:
+            print('Error: ' + sys.argv[1] + ' has single host name with different values! name=' + tok[0] + ' original IP = ' + d[tok[0]] + ' second IP = ' + tok[1])
+            # closeFiles(fileHandler1, fileHandler2, outputFileHandler, sys.argv[3], True)
+            # exit(1)
     if not d:
         print('Error: ' + sys.argv[1] + ' is empty!')
         closeFiles(fileHandler1, fileHandler2, outputFileHandler, sys.argv[3], True)
@@ -56,9 +57,10 @@ if __name__ == '__main__':
     for line in fileHandler2:
         tok = line.strip().split()
         if len(tok) != 2:
-            print('Error: ' + sys.argv[2] + ' has Invalid format!')
-            closeFiles(fileHandler1, fileHandler2, outputFileHandler, sys.argv[3], True)
-            exit(1)
+            print('Error: ' + sys.argv[2] + ' has one line with invalid format! the line is \'' + line + '\'')
+            # closeFiles(fileHandler1, fileHandler2, outputFileHandler, sys.argv[3], True)
+            # exit(1)
+            continue
         underscore_pos = tok[0].find('_')
         key = tok[0][:underscore_pos if underscore_pos != -1 else len(tok[0])]
         if key in d:
